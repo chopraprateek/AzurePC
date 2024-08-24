@@ -1,1 +1,1 @@
-SprinBoot demo project for Azure first deployment
+Azure App config with feature <SprinBoot project>
