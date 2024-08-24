@@ -15,4 +15,9 @@ public class FunRestController {
     public String HelloWow(){
         return "I am good?";
     }
+
+    @GetMapping("/startok")
+    public String HelloOk(){
+        return "ok cool !";
+    }
 }
