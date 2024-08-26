@@ -13,21 +13,18 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>azure</name>
 	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<spring-boot-thin-layout.version>1.0.31.RELEASE</spring-boot-thin-layout.version>
+		<start-class>com.cloud.azure.AzureApplication</start-class>
+
+		<!-- customize those properties. WARNING: the functionAppName should be unique across Azure -->
+		<azure.functions.maven.plugin.version>1.29.0</azure.functions.maven.plugin.version>
+		<functionResourceGroup>parteekc_rg</functionResourceGroup>
+		<functionAppServicePlanName>ASP-parteekcrg-a362</functionAppServicePlanName>
+		<functionAppName>myappFuncPC</functionAppName>
+		<functionPricingTier>Y1</functionPricingTier>
+		<functionAppRegion>South India</functionAppRegion>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -54,6 +51,24 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-function-adapter-azure</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.9.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<version>1.5.2</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -69,6 +84,63 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-functions-maven-plugin</artifactId>
+				<version>${azure.functions.maven.plugin.version}</version>
+
+				<configuration>
+					<appName>${functionAppName}</appName>
+					<resourceGroup>${functionResourceGroup}</resourceGroup>
+					<region>${functionAppRegion}</region>
+					<appServicePlanName>${functionAppServicePlanName}</appServicePlanName>
+					<pricingTier>${functionPricingTier}</pricingTier>
+
+					<hostJson>${project.basedir}/src/main/resources/host.json</hostJson>
+					<localSettingsJson>${project.basedir}/src/main/resources/local.settings.json</localSettingsJson>
+
+					<runtime>
+						<os>linux</os>
+						<javaVersion>17</javaVersion>
+					</runtime>
+
+					<appSettings>
+						<property>
+							<name>FUNCTIONS_EXTENSION_VERSION</name>
+							<value>~4</value>
+						</property>
+					</appSettings>
+				</configuration>
+				<executions>
+					<execution>
+						<id>package-functions</id>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.boot.experimental</groupId>
+						<artifactId>spring-boot-thin-layout</artifactId>
+						<version>${spring-boot-thin-layout.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
